@@ -1,25 +1,36 @@
-
 import { PartialType } from '@nestjs/mapped-types';
 import { Type } from 'class-transformer';
-import { IsInt, IsOptional, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString, Min } from 'class-validator';
 import { CreateAtletaDto } from './create.atleta.dto';
 
-// ⚠️ NOTA: Usamos PartialType de @nestjs/mapped-types para heredar
-//         todos los campos de CreateAtletaDto y hacerlos opcionales.
-
 export class UpdateAtletaDto extends PartialType(CreateAtletaDto) {
-  // Los campos 'nombre', 'tiempo', 'posicion', y 'ciudadId' son ahora opcionales gracias a PartialType.
-
-  // 🚨 Sobreescribimos el DNI: sigue siendo opcional, pero si se envía, debe ser válido.
-  @IsOptional()
-  @Type(() => Number)
+  /** dni (int) - Debe ser un número entero y obligatorio */
+  @IsNotEmpty({ message: 'El DNI es obligatorio.' })
+  @Type(() => Number) // Asegura que el DNI se trate como número si viene como string
   @IsInt({ message: 'El DNI debe ser un número entero válido.' })
   @Min(1000000, { message: 'El DNI debe tener al menos 7 dígitos.' })
-  dni?: number;
-  
-  // Sobreescribimos ciudadId para hacerlo opcional, pero mantenemos la validación si se envía
-  @IsOptional()
+  dni: number;
+
+  /** nombre (string) - Obligatorio */
+  @IsString({ message: 'El nombre debe ser una cadena de texto.' })
+  @IsNotEmpty({ message: 'El nombre del atleta es obligatorio.' })
+  nombre: string;
+
+  /** tiempo (string, ej: "2h 07m 30s") - Obligatorio */
+  @IsString({ message: 'El tiempo debe ser una cadena de texto.' })
+  @IsNotEmpty({ message: 'El tiempo de maratón es obligatorio.' })
+  tiempo: string;
+
+  /** posicion (int) - Obligatorio y mayor a 0 */
+  @IsNotEmpty({ message: 'La posición es obligatoria.' })
+  @Type(() => Number)
+  @IsInt({ message: 'La posición debe ser un número entero.' })
+  @Min(1, { message: 'La posición debe ser mayor o igual a 1.' })
+  posicion: number;
+
+  /** ciudadId (int, referencia a la ciudad) - Obligatorio */
+  @IsNotEmpty({ message: 'La ciudad de origen es obligatoria.' })
   @Type(() => Number)
   @IsInt({ message: 'El ID de la ciudad debe ser un número entero válido.' })
-  ciudadId?: number;
+  ciudadId: number;
 }
