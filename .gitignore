@@ -1,0 +1,51 @@
+# ------------------------------------
+# 1. DEPENDENCIAS Y CONSTRUCCIÓN (NODE.JS Y COMPILACIÓN)
+# ------------------------------------
+
+# Módulos de dependencia (para ambos proyectos)
+node_modules
+# Archivos de logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Directorios de compilación/salida
+/dist
+/build
+/out
+
+# Archivos de caché
+.eslintcache
+
+# ------------------------------------
+# 2. ESPECÍFICO DE NESTJS (BACKEND)
+# ------------------------------------
+
+# NestJS compila TypeScript a este directorio
+dist
+
+# ------------------------------------
+# 3. ESPECÍFICO DE VUE 3 (FRONTEND)
+# ------------------------------------
+
+# Directorio de salida de compilación de Vue (ej. Vite o Vue CLI)
+dist
+
+# Archivos de configuración de Vue CLI/Vite
+.env.local
+.env.*.local
+
+# ------------------------------------
+# 4. CONFIGURACIÓN LOCAL Y ENTORNO
+# ------------------------------------
+
+
+
+# Archivos de editor/IDE (Visual Studio Code, JetBrains, etc.)
+.vscode/
+.idea/
+
+# Archivos generados por SO
+.DS_Store
+Thumbs.db
