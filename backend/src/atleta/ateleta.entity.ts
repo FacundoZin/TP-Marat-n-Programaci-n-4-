@@ -1,5 +1,3 @@
-// backend/src/atleta/atleta.entity.ts
-
 import {
   Column,
   Entity,
