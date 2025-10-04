@@ -1,74 +1,108 @@
 <script setup lang="ts">
-import TableComponent from '@/Components/TableComponent.vue';
+import TableAtletasComponent from '@/Components/TableAtletasComponent.vue';
+import TableCiudadComponent from '@/Components/TableCiudadComponent.vue';
 import { ApiService } from '@/ExternalServices/ApiServices';
 import type { Atleta } from '@/Types/Atleta';
 import type { Ciudad } from '@/Types/Ciudad';
 import { onMounted, ref } from 'vue';
 
-const items = ref<Ciudad[] | Atleta[]>([])
-const currentResource = ref('Atletas');
-const isLoading = ref(false);
+const Ciudades = ref<Ciudad[]>([])
+const atletas = ref<Atleta[]>([])
+const isLoading = ref(true);
 const errorMessage = ref<String | null>(null);
+const BusquedaActual = ref<string>();
 
 
 
-const fetchResource = async (resourceType: string) => {
+const SearchAtleta = async () => {
     isLoading.value = true;
-    currentResource.value = resourceType;
     errorMessage.value = null
+    Ciudades.value = []
 
     let Result;
 
-    if (resourceType === 'Ciudades') {
-
-        Result = await ApiService.findAllCiudades();
-    } else if (resourceType === 'Atletas') {
-
-        Result = await ApiService.findAllAtletas();
-    } else {
-
-        isLoading.value = false;
-        errorMessage.value = "Tipo de recurso no valido";
-        return;
-    }
+    Result = await ApiService.findAllAtletas();
 
     if (!Result.isSuccess) {
         errorMessage.value = Result.error.message;
-        items.value = [];
+        atletas.value = [];
     } else {
-        items.value = Result.value;
+        atletas.value = Result.value;
+    }
+
+    isLoading.value = false;
+};
+
+
+
+const SearchCiudades= async () => {
+    isLoading.value = true;
+    errorMessage.value = null;
+    atletas.value = [];
+
+    let Result;
+
+    Result = await ApiService.findAllAtletas();
+
+    if (!Result.isSuccess) {
+        errorMessage.value = Result.error.message;
+        Ciudades.value = [];
+    } else {
+        Ciudades.value = Result.value;
     }
 
     isLoading.value = false;
 };
 
 onMounted(() => {
-    fetchResource('Atletas');
+    SearchAtleta();
 });
+
 </script>
+
+
 
 <template>
     <div class="container my-5">
-        <h1 class="text-center mb-4 text-secondary">Dashboard ({{ currentResource }})</h1>
+        <h1 class="text-center mb-4 text-secondary">Lista de ({{ BusquedaActual }})</h1>
 
         <div class="d-flex justify-content-center mb-5">
-            <button @click="fetchResource('Atletas')"
-                :class="['btn me-3', currentResource === 'Atletas' ? 'btn-primary' : 'btn-outline-primary']"
+            <button @click="SearchAtleta"
+                :class="['btn me-3', BusquedaActual === 'Atletas' ? 'btn-primary' : 'btn-outline-primary']"
                 :disabled="isLoading">
                 <i class="bi bi-person-fill"></i> Buscar Atletas
             </button>
 
-            <button @click="fetchResource('Ciudades')"
-                :class="['btn', currentResource === 'Ciudades' ? 'btn-primary' : 'btn-outline-primary']"
+            <button @click="SearchCiudades()"
+                :class="['btn', BusquedaActual === 'Ciudades' ? 'btn-primary' : 'btn-outline-primary']"
                 :disabled="isLoading">
                 <i class="bi bi-building"></i> Buscar Ciudades
             </button>
         </div>
 
-        <hr class="mb-5">
+        <TableAtletasComponent 
+            v-if=" isLoading === false && BusquedaActual === 'Atletas'"
+            :Atletas="atletas"
+        />
 
-        <TableComponent :items="items" :resourceName="currentResource" :isLoading="isLoading"
-            :errorMessage="errorMessage" />
+        <TableCiudadComponent 
+            v-else-if=" isLoading === false && BusquedaActual === 'Ciudades'"
+            :Ciudades="Ciudades"
+        />
+
+        <div v-if="isLoading" class="text-center p-5 border rounded bg-light">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Cargando...</span>
+            </div>
+            <p class="mt-3 fs-5 text-muted">Cargando datos de {{ BusquedaActual }}...</p>
+        </div>
+
+        <div v-else-if="errorMessage" class="alert alert-danger mt-4 text-center">
+            <strong>Error:</strong> {{ errorMessage }}
+            <p class="mb-0">No se pudieron cargar los datos de {{ BusquedaActual }}.</p>
+        </div>
+
+        <hr class="mb-5">
 
     </div>
 </template>
