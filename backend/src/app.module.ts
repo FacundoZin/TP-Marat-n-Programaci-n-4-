@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AtletaModule } from './atleta/atleta.module';
+import { CiudadModule } from './ciudad/ciudad.module';
 
 @Module({
   imports: [
@@ -13,7 +15,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT?? '', 10) || 5432,
+      port: parseInt(process.env.DB_PORT ?? '', 10) || 5432,
       username: process.env.DB_USERNAME || 'postgres',
       password: process.env.DB_PASSWORD || 'your_db_password', // ¡CAMBIA ESTO!
       database: process.env.DB_DATABASE || 'maraton_db',
@@ -21,9 +23,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true, // ¡USAR SOLO EN DESARROLLO! Crea las tablas automáticamente
     }),
 
-    // Tus módulos de dominio
-    // CiudadModule,
-    // AtletaModule,
+    CiudadModule,
+    AtletaModule,
   ],
   controllers: [],
   providers: [],
