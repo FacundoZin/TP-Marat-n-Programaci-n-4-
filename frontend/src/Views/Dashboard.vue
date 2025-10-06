@@ -10,7 +10,7 @@ const Ciudades = ref<Ciudad[]>([])
 const atletas = ref<Atleta[]>([])
 const isLoading = ref(true);
 const errorMessage = ref<String | null>(null);
-const BusquedaActual = ref<string>();
+const BusquedaActual = ref<string>('Atletas');
 
 
 
