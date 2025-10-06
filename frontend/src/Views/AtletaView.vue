@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ApiService } from '@/ExternalServices/ApiServices';
+import router from '@/router';
 import type { Atleta } from '@/Types/Atleta';
 import { defineProps, ref, watch } from 'vue';
 
-const atleta = ref<Atleta | null>(null);
+const _atleta = ref<Atleta | null>(null);
 const ErrorMessage = ref<string | null>(null);
 
 
@@ -15,8 +16,17 @@ const props = defineProps({
   }
 });
 
+const EditarAtleta = () => {
+  router.push({
+    name: 'UpdateAtleta', 
+    state: {
+      atleta: _atleta.value
+    }
+  });
+};
+
 const SearchAtleta = async (id: number) => {
-  atleta.value = null;
+  _atleta.value = null;
   ErrorMessage.value = null;
 
   const result = await ApiService.findOneAtleta(id);
@@ -24,7 +34,7 @@ const SearchAtleta = async (id: number) => {
   if (!result.isSuccess) {
     ErrorMessage.value = result.error.message
   } else {
-    atleta.value = result.value
+    _atleta.value = result.value
   }
 }
 
@@ -45,7 +55,7 @@ watch(() => props.IdAtleta, (newId) => {
       <p class="mt-2 mb-0">No se pudo encontrar el atleta con ID: {{ props.IdAtleta }}</p>
     </div>
 
-    <div v-else-if="!atleta" class="text-center p-5 border rounded bg-light">
+    <div v-else-if="!_atleta" class="text-center p-5 border rounded bg-light">
       <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
         <span class="visually-hidden">Cargando...</span>
       </div>
@@ -55,14 +65,14 @@ watch(() => props.IdAtleta, (newId) => {
     <div v-else class="card shadow-lg">
       <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
         <h2 class="card-title mb-0 fs-4">
-          <i class="bi bi-person-fill me-2"></i>{{ atleta.nombre }}
+          <i class="bi bi-person-fill me-2"></i>{{ _atleta.nombre }}
         </h2>
-        <RouterLink :to="{
-          name: 'UpdateAtleta',
-          params: { atletaData: atleta }
-        }" class="btn btn-warning btn-sm fw-bold">
+        <button 
+          @click="EditarAtleta" 
+          class="btn btn-warning btn-sm fw-bold"
+        >
           <i class="bi bi-pencil-square me-1"></i> Editar Atleta
-        </RouterLink>
+        </button>
       </div>
       <div class="card-body">
         <div class="row">
@@ -72,15 +82,15 @@ watch(() => props.IdAtleta, (newId) => {
             <ul class="list-group list-group-flush">
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <strong>DNI:</strong>
-                <span class="badge bg-info text-dark">{{ atleta.dni }}</span>
+                <span class="badge bg-info text-dark">{{ _atleta.dni }}</span>
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <strong>ID Ciudad:</strong>
-                <span class="badge bg-secondary text-white">{{ atleta.ciudadId }}</span>
+                <span class="badge bg-secondary text-white">{{ _atleta.ciudadId }}</span>
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <strong>ID Atleta:</strong>
-                <span class="badge bg-primary">{{ atleta.id }}</span>
+                <span class="badge bg-primary">{{ _atleta.id }}</span>
               </li>
             </ul>
           </div>
@@ -90,15 +100,15 @@ watch(() => props.IdAtleta, (newId) => {
             <ul class="list-group list-group-flush">
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <strong>Posición:</strong>
-                <span class="badge bg-success fs-5">{{ atleta.posicion }}º</span>
+                <span class="badge bg-success fs-5">{{ _atleta.posicion }}º</span>
               </li>
               <li class="list-group-item d-flex justify-content-between align-items-center">
                 <strong>Tiempo:</strong>
-                <span class="badge bg-warning text-dark fs-5">{{ atleta.tiempo }}</span>
+                <span class="badge bg-warning text-dark fs-5">{{ _atleta.tiempo }}</span>
               </li>
             </ul>
 
-            <div v-if="atleta.posicion <= 3" class="mt-3 alert alert-success text-center">
+            <div v-if="_atleta.posicion <= 3" class="mt-3 alert alert-success text-center">
               ¡Felicitaciones! Es un atleta de podio. 🥇🥈🥉
             </div>
           </div>

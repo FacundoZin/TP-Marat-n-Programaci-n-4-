@@ -9,7 +9,7 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/dashboard',
+      path: '/',
       name: 'Dasboard',
       component: Dashboard,
       props: false,
@@ -36,7 +36,7 @@ const router = createRouter({
       path: '/updateatleta',
       name: 'UpdateAtleta',
       component: UpdateAtleta,
-      props: (route) => ({ atleta: route.params.atletaData }),
+      props: true
     },
   ],
 })
